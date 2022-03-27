@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "pkg/api";
+
+service Playlist {
+	rpc Get(GetRequest) returns (GetResponse) {}
+}
+
+message GetRequest {
+	string playlistId = 1;
+	optional string pageToken = 2;
+}
+
+message PageInfo {
+	uint32 totalResults = 1;
+	uint32 resultsPerPage = 2;
+}
+
+message GetResponse1 {
+	string kind = 1;
+	string etag = 2;
+	optional string nextPageToken = 3;
+	optional string prevPageToken = 4;
+	PageInfo pageInfo = 5;
+}
+
+message GetResponse {
+
+	message Default {
+		string url = 1;
+		uint32 width = 2;
+		uint32 height = 3;
+	}
+
+	message Medium {
+		string url = 1;
+		uint32 width = 2;
+		uint32 height = 3;
+	}
+
+	message High {
+		string url = 1;
+		uint32 width = 2;
+		uint32 height = 3;
+	}
+
+	message Standard {
+		string url = 1;
+		uint32 width = 2;
+		uint32 height = 3;
+	}
+
+	message Maxres {
+		string url = 1;
+		uint32 width = 2;
+		uint32 height = 3;
+	}
+
+	message Thumbnails {
+		Default default = 1;
+		Medium medium = 2;
+		High high = 3;
+		Standard standard = 4;
+		Maxres maxres = 5;
+	}
+
+	message Resourceid {
+		string kind = 1;
+		string videoId = 2;
+	}
+
+	message Snippet {
+		string publishedAt = 1;
+		string channelId = 2;
+		string title = 3;
+		string description = 4;
+		Thumbnails thumbnails = 5;
+		string channelTitle = 6;
+		string playlistId = 7;
+		uint32 position = 8;
+		Resourceid resourceId = 9;
+		string videoOwnerChannelTitle = 10;
+		string videoOwnerChannelId = 11;
+	}
+
+	message Items {
+		string kind = 1;
+		string etag = 2;
+		string id = 3;
+		Snippet snippet = 4;
+	}
+
+	message Pageinfo {
+		uint32 totalResults = 1;
+		uint32 resultsPerPage = 2;
+	}
+
+	string kind = 1;
+	string etag = 2;
+	optional string nextPageToken = 3;
+	optional string prevPageToken = 4;
+	repeated Items items = 5;
+	Pageinfo pageInfo = 6;
+}

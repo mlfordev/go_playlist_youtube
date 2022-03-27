@@ -1,8 +1,8 @@
 package main
 
 import (
-	"grpc_test/pkg/adder"
 	"grpc_test/pkg/api"
+	"grpc_test/pkg/playlist"
 	"log"
 	"net"
 
@@ -10,8 +10,11 @@ import (
 )
 
 func main() {
+
+	playlist.GetPlaylistItems("");
+
 	s := grpc.NewServer()
-	srv := &adder.GRPCServer{}
+	srv := &playlist.GRPCServer{}
 	api.RegisterAdderServer(s, srv)
 
 	l, err := net.Listen("tcp", ":8080")
