@@ -12,7 +12,7 @@ import (
 )
 
 type GRPCServer struct {
-	api.UnimplementedAdderServer
+	api.UnimplementedPlaylistServer
 }
 
 func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResponse, error) {
@@ -33,7 +33,7 @@ func playlistItemsList(service *youtube.Service, part string, playlistId string,
 	return response
 }
 
-func GetPlaylistItems(pageToken string) {
+func GetPlaylistItems(pageToken string) *youtube.PlaylistItemListResponse {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -47,6 +47,5 @@ func GetPlaylistItems(pageToken string) {
 		log.Fatalf("Error creating YouTube service: %v", err)
 	}
 
-	playlistResponse := playlistItemsList(service, "snippet", playlistId, pageToken)
-	log.Println(playlistResponse)
+	return playlistItemsList(service, "snippet", playlistId, pageToken)
 }

@@ -11,11 +11,11 @@ import (
 
 func main() {
 
-	playlist.GetPlaylistItems("");
-
+	r := playlist.GetPlaylistItems("")
+	log.Println(r)
 	s := grpc.NewServer()
 	srv := &playlist.GRPCServer{}
-	api.RegisterAdderServer(s, srv)
+	api.RegisterPlaylistServer(s, srv)
 
 	l, err := net.Listen("tcp", ":8080")
 	if err != nil {
