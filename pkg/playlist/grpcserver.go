@@ -22,7 +22,7 @@ func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResp
 func playlistItemsList(service *youtube.Service, part string, playlistId string, pageToken string) *youtube.PlaylistItemListResponse {
 	p := []string{part}
 	call := service.PlaylistItems.List(p)
-	call = call.PlaylistId(playlistId)
+	call = call.PlaylistId(playlistId).MaxResults(10)
 	if pageToken != "" {
 		call = call.PageToken(pageToken)
 	}
