@@ -25,32 +25,41 @@ func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResp
 	items := []*api.GetResponse_Items{}
 	for _, value := range grpsResponse.Items {
 		// log.Println(value.Snippet.Title, value.Snippet.Thumbnails.Maxres)
-		thumbnails := &api.GetResponse_Thumbnails {
-			Default: &api.GetResponse_Default{
+		thumbnails := &api.GetResponse_Thumbnails{}
+		if value.Snippet.Thumbnails.Default != nil {
+			thumbnails.Default = &api.GetResponse_Default{
 				Url: value.Snippet.Thumbnails.Default.Url,
 				Width: uint32(value.Snippet.Thumbnails.Default.Width),
 				Height: uint32(value.Snippet.Thumbnails.Default.Height),
-			},
-			Medium: &api.GetResponse_Medium{
+			}
+		}
+		if value.Snippet.Thumbnails.Medium != nil {
+			thumbnails.Medium = &api.GetResponse_Medium{
 				Url: value.Snippet.Thumbnails.Medium.Url,
 				Width: uint32(value.Snippet.Thumbnails.Medium.Width),
 				Height: uint32(value.Snippet.Thumbnails.Medium.Height),
-			},
-			High: &api.GetResponse_High{
+			}
+		}
+		if value.Snippet.Thumbnails.High != nil {
+			thumbnails.High = &api.GetResponse_High{
 				Url: value.Snippet.Thumbnails.High.Url,
 				Width: uint32(value.Snippet.Thumbnails.High.Width),
 				Height: uint32(value.Snippet.Thumbnails.High.Height),
-			},
-			Standard: &api.GetResponse_Standard{
+			}
+		}
+		if value.Snippet.Thumbnails.Standard != nil {
+			thumbnails.Standard = &api.GetResponse_Standard{
 				Url: value.Snippet.Thumbnails.Standard.Url,
 				Width: uint32(value.Snippet.Thumbnails.Standard.Width),
 				Height: uint32(value.Snippet.Thumbnails.Standard.Height),
-			},
-			Maxres: &api.GetResponse_Maxres{
+			}
+		}
+		if value.Snippet.Thumbnails.Maxres != nil {
+			thumbnails.Maxres = &api.GetResponse_Maxres{
 				Url:    value.Snippet.Thumbnails.Maxres.Url,
 				Width:  uint32(value.Snippet.Thumbnails.Maxres.Width),
 				Height: uint32(value.Snippet.Thumbnails.Maxres.Height),
-			},
+			}
 		}
 		resourceId := &api.GetResponse_Resourceid{
 			Kind:    value.Snippet.ResourceId.Kind,
