@@ -10,9 +10,6 @@ import (
 )
 
 func main() {
-
-	r := playlist.GetPlaylistItems("")
-	log.Println(r)
 	s := grpc.NewServer()
 	srv := &playlist.GRPCServer{}
 	api.RegisterPlaylistServer(s, srv)

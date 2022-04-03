@@ -16,7 +16,76 @@ type GRPCServer struct {
 }
 
 func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResponse, error) {
-	return &api.GetResponse{}, nil
+	grpsResponse := GetPlaylistItems(req.PlaylistId, req.PageToken)
+	pageInfo := &api.GetResponse_Pageinfo{
+		TotalResults: uint32(grpsResponse.PageInfo.TotalResults),
+		ResultsPerPage: uint32(grpsResponse.PageInfo.ResultsPerPage),
+	}
+	var item *api.GetResponse_Items
+	items := []*api.GetResponse_Items{}
+	for _, value := range grpsResponse.Items {
+		// log.Println(value.Snippet.Title, value.Snippet.Thumbnails.Maxres)
+		thumbnails := &api.GetResponse_Thumbnails {
+			Default: &api.GetResponse_Default{
+				Url: value.Snippet.Thumbnails.Default.Url,
+				Width: uint32(value.Snippet.Thumbnails.Default.Width),
+				Height: uint32(value.Snippet.Thumbnails.Default.Height),
+			},
+			Medium: &api.GetResponse_Medium{
+				Url: value.Snippet.Thumbnails.Medium.Url,
+				Width: uint32(value.Snippet.Thumbnails.Medium.Width),
+				Height: uint32(value.Snippet.Thumbnails.Medium.Height),
+			},
+			High: &api.GetResponse_High{
+				Url: value.Snippet.Thumbnails.High.Url,
+				Width: uint32(value.Snippet.Thumbnails.High.Width),
+				Height: uint32(value.Snippet.Thumbnails.High.Height),
+			},
+			Standard: &api.GetResponse_Standard{
+				Url: value.Snippet.Thumbnails.Standard.Url,
+				Width: uint32(value.Snippet.Thumbnails.Standard.Width),
+				Height: uint32(value.Snippet.Thumbnails.Standard.Height),
+			},
+			Maxres: &api.GetResponse_Maxres{
+				Url:    value.Snippet.Thumbnails.Maxres.Url,
+				Width:  uint32(value.Snippet.Thumbnails.Maxres.Width),
+				Height: uint32(value.Snippet.Thumbnails.Maxres.Height),
+			},
+		}
+		resourceId := &api.GetResponse_Resourceid{
+			Kind:    value.Snippet.ResourceId.Kind,
+			VideoId: value.Snippet.ResourceId.VideoId,
+		}
+		snippet := &api.GetResponse_Snippet {
+			PublishedAt: value.Snippet.PublishedAt,
+			ChannelId: value.Snippet.ChannelId,
+			Title: value.Snippet.Title,
+			Description: value.Snippet.Description,
+			Thumbnails: thumbnails,
+			ChannelTitle: value.Snippet.ChannelTitle,
+			PlaylistId: value.Snippet.PlaylistId,
+			Position: uint32(value.Snippet.Position),
+			ResourceId: resourceId,
+			VideoOwnerChannelTitle: value.Snippet.VideoOwnerChannelTitle,
+			VideoOwnerChannelId: value.Snippet.VideoOwnerChannelId,
+		}
+		item = &api.GetResponse_Items {
+			Kind: value.Kind,
+			Etag: value.Etag,
+			Id: value.Id,
+			Snippet: snippet,
+		}
+		items = append(items, item)
+	}
+	response := &api.GetResponse{
+		Kind: grpsResponse.Kind,
+		Etag: grpsResponse.Etag,
+		NextPageToken: grpsResponse.NextPageToken,
+		Items: items,
+		PrevPageToken: grpsResponse.PrevPageToken,
+		PageInfo: pageInfo,
+	}
+	return response, nil
 }
 
 func playlistItemsList(service *youtube.Service, part string, playlistId string, pageToken string) *youtube.PlaylistItemListResponse {
@@ -33,13 +102,12 @@ func playlistItemsList(service *youtube.Service, part string, playlistId string,
 	return response
 }
 
-func GetPlaylistItems(pageToken string) *youtube.PlaylistItemListResponse {
+func GetPlaylistItems(playlistId string, pageToken string) *youtube.PlaylistItemListResponse {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file in package playlst")
 	}
 	apiKey := os.Getenv("API_KEY")
-	playlistId := os.Getenv("PLAYLIST_ID")
 	ctx := context.Background()
 	service, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
 

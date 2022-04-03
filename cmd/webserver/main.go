@@ -2,36 +2,42 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"grpc_test/pkg/api"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type Result struct {
-	R int32
-	E error
-}
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	var x int32 = 2
-	var y int32 = 2
-	var res *api.AddResponse
-	var rs = Result{}
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file in package main")
+	}
+	playlistId := os.Getenv("PLAYLIST_ID")
+	var pageToken string = ""
+	var res *api.GetResponse
 
 	conn, err := grpc.Dial(":8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	tpl := template.Must(template.ParseFiles("cmd/webserver/templates/index.html"))
 	if err == nil {
-		c := api.NewAdderClient(conn)
-		res, _ = c.Add(context.Background(), &api.AddRequest{X: x, Y: y})
-		rs.R = res.GetResult()
+		c := api.NewPlaylistClient(conn)
+		res, _ = c.Get(context.Background(), &api.GetRequest{
+			PlaylistId: playlistId,
+			PageToken:  pageToken,
+		})
+		log.Println(len(res.Items))
+		for _, value := range res.Items {
+			log.Println(value.GetId())
+		}
 	} else {
-		rs.E = err
+		log.Fatal(err)
 	}
-	tpl.Execute(w, rs)
+	tpl.Execute(w, res)
 }
 
 func main() {
@@ -41,6 +47,6 @@ func main() {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	mux.HandleFunc("/", indexHandler)
-	fmt.Println("Listening port :3000")
+	log.Println("Listening port :3000")
 	http.ListenAndServe(":3000", mux)
 }
