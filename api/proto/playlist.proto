@@ -10,20 +10,12 @@ service Playlist {
 
 message GetRequest {
 	string playlistId = 1;
-	optional string pageToken = 2;
+	string pageToken = 2;
 }
 
 message PageInfo {
 	uint32 totalResults = 1;
 	uint32 resultsPerPage = 2;
-}
-
-message GetResponse1 {
-	string kind = 1;
-	string etag = 2;
-	optional string nextPageToken = 3;
-	optional string prevPageToken = 4;
-	PageInfo pageInfo = 5;
 }
 
 message GetResponse {
@@ -99,8 +91,8 @@ message GetResponse {
 
 	string kind = 1;
 	string etag = 2;
-	optional string nextPageToken = 3;
-	optional string prevPageToken = 4;
+	string nextPageToken = 3;
+	string prevPageToken = 4;
 	repeated Items items = 5;
 	Pageinfo pageInfo = 6;
 }
