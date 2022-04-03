@@ -21,7 +21,7 @@ func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResp
 		TotalResults: uint32(grpsResponse.PageInfo.TotalResults),
 		ResultsPerPage: uint32(grpsResponse.PageInfo.ResultsPerPage),
 	}
-	var item *api.GetResponse_Items
+	// var item *api.GetResponse_Items
 	items := []*api.GetResponse_Items{}
 	for _, value := range grpsResponse.Items {
 		// log.Println(value.Snippet.Title, value.Snippet.Thumbnails.Maxres)
@@ -78,7 +78,7 @@ func (s *GRPCServer) Get(ctx context.Context, req *api.GetRequest) (*api.GetResp
 			VideoOwnerChannelTitle: value.Snippet.VideoOwnerChannelTitle,
 			VideoOwnerChannelId: value.Snippet.VideoOwnerChannelId,
 		}
-		item = &api.GetResponse_Items {
+		item := &api.GetResponse_Items {
 			Kind: value.Kind,
 			Etag: value.Etag,
 			Id: value.Id,

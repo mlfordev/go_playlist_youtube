@@ -1,13 +1,37 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="/assets/style.css" rel="stylesheet">
+    <link href="/assets/style.css" rel="stylesheet">
     <title>test sendy.land</title>
-  </head>
-  <body>
-    <h1>Hello, world! {{.R}}</h1>
-    <div>{{.E}}</div>
-  </body>
+</head>
+
+<body>
+    <div class="playlist">
+        <h1 class="playlist__title">Playlist</h1>
+        <ul class="playlist__items">
+            {{range .Items}}
+            <li class="playlist__item snippet">
+                <div class="snippet__thumb">
+                    <img class="snippet__pic" src="{{.Snippet.Thumbnails.Medium.Url}}" alt="">
+                </div>
+                <div class="snippet__text">
+                    <h2 class="snippet__title">{{.Snippet.Title}}</h2>
+                    <div class="snippet__published">{{.Snippet.PublishedAt}}</div>
+                    <a href="https://www.youtube.com/channel/{{.Snippet.ChannelId}}" class="snippet__channel-title">{{.Snippet.ChannelTitle}}</a>
+                    <div class="snippet__description">{{if .Snippet.Description}}{{ slice  .Snippet.Description 0 100}}{{end}}...</div>
+                </div>
+                <a class="snippet__link" href="https://www.youtube.com/watch?v={{.Snippet.ResourceId.VideoId}}"></a>
+            </li>
+            {{end}}
+        </ul>
+        <div class="playlist__nav">
+            {{if .PrevPageToken}}<a href="/?page={{.PrevPageToken}}">prev</a>{{end}}
+            {{if .NextPageToken}}<a href="/?page={{.NextPageToken}}">next</a>{{end}}
+        </div>
+    </div>
+</body>
+
 </html>

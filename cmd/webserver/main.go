@@ -18,8 +18,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Error loading .env file in package main")
 	}
+	query := r.URL.Query()
 	playlistId := os.Getenv("PLAYLIST_ID")
-	var pageToken string = ""
+	var pageToken string = query.Get("page")
+	log.Println("page", pageToken)
 	var res *api.GetResponse
 
 	conn, err := grpc.Dial(":8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
