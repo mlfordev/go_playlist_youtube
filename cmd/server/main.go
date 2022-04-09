@@ -14,6 +14,7 @@ func main() {
 	srv := &playlist.GRPCServer{}
 	api.RegisterPlaylistServer(s, srv)
 
+	log.Println("Listening port :8080")
 	l, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
