@@ -12,26 +12,50 @@
     <div class="playlist">
         <h1 class="playlist__title">Playlist</h1>
         <ul class="playlist__items">
-            {{range .Items}}
-            <li class="playlist__item snippet">
-                <div class="snippet__thumb">
-                    <img class="snippet__pic" src="{{if .Snippet.Thumbnails.Medium}}{{.Snippet.Thumbnails.Medium.Url}}{{end}}" alt="{{.Snippet.Title}}">
-                </div>
-                <div class="snippet__text">
-                    <h2 class="snippet__title">{{.Snippet.Title}}</h2>
-                    <div class="snippet__published">{{.Snippet.PublishedAt}}</div>
-                    <a href="https://www.youtube.com/channel/{{.Snippet.ChannelId}}" class="snippet__channel-title">{{.Snippet.ChannelTitle}}</a>
-                    <div class="snippet__description">
-                        {{if .Snippet.Description}}
-                            {{$length := len .Snippet.Description}}
-                            {{if gt $length 100}}{{ slice  .Snippet.Description 0 100}}...{{else}}{{.Snippet.Description}}{{end}}
-                        {{else}}
-                            No Description
-                        {{end}}
-                    </div>
-                </div>
-                <a class="snippet__link" href="https://www.youtube.com/watch?v={{.Snippet.ResourceId.VideoId}}"></a>
-            </li>
+            {{if .Items}}
+                {{range .Items}}
+                    {{if .Snippet}}
+                        <li class="playlist__item snippet">
+                            <div class="snippet__thumb">
+                                {{if .Snippet.Thumbnails}}
+                                    {{if .Snippet.Thumbnails.Medium}}
+                                        <img class="snippet__pic" src="{{.Snippet.Thumbnails.Medium.Url}}" alt="Превью">
+                                    {{else}}
+                                        <img class="snippet__pic" src="/assets/pic.jpg" alt="Превью нет">
+                                    {{end}}
+                                {{else}}
+                                    <img class="snippet__pic" src="/assets/pic.jpg" alt="Превью нет">
+                                {{end}}
+                            </div>
+                            <div class="snippet__text">
+                                <h2 class="snippet__title">{{if .Snippet.Title}}{{.Snippet.Title}}{{else}}Нет заголовка{{end}}</h2>
+                                {{if .Snippet.PublishedAt}}<div class="snippet__published">{{.Snippet.PublishedAt}}</div>{{end}}
+                                {{if .Snippet.ChannelId}}
+                                    <a href="https://www.youtube.com/channel/{{.Snippet.ChannelId}}" class="snippet__channel-title">
+                                        {{if .Snippet.ChannelTitle}}
+                                            {{.Snippet.ChannelTitle}}
+                                        {{else}}
+                                            Без названия
+                                        {{end}}
+                                    </a>
+                                {{end}}
+                                <div class="snippet__description">
+                                    {{if .Snippet.Description}}
+                                        {{$length := len .Snippet.Description}}
+                                        {{if gt $length 100}}{{ slice  .Snippet.Description 0 100}}...{{else}}{{.Snippet.Description}}{{end}}
+                                    {{else}}
+                                        No Description
+                                    {{end}}
+                                </div>
+                            </div>
+                            {{if .Snippet.ResourceId.VideoId}}
+                                <a class="snippet__link" href="https://www.youtube.com/watch?v={{.Snippet.ResourceId.VideoId}}"></a>
+                            {{end}}
+                        </li>
+                    {{end}}
+                {{end}}
+            {{else}}
+                <li class="playlist__item snippet"><div class="snippet__text">Список пустой</div></li>
             {{end}}
         </ul>
         <div class="playlist__nav">
@@ -40,5 +64,4 @@
         </div>
     </div>
 </body>
-
 </html>
