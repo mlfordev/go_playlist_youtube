@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"grpc_test/pkg/api"
 	"html/template"
 	"log"
@@ -13,13 +14,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file in package main")
-	}
+func indexHandler(w http.ResponseWriter, r *http.Request, playlistId string) {
 	query := r.URL.Query()
-	playlistId := os.Getenv("PLAYLIST_ID")
 	var pageToken string = query.Get("page")
 	log.Println("page", pageToken)
 	var res *api.GetResponse
@@ -43,12 +39,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var playlistId string
+	flag.Parse()
 	mux := http.NewServeMux()
-
 	fs := http.FileServer(http.Dir("cmd/webserver/assets"))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
-
-	mux.HandleFunc("/", indexHandler)
+	if flag.NArg() > 0 {
+		playlistId = flag.Arg(0)
+	} else {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file in package main")
+		}
+		playlistId = os.Getenv("PLAYLIST_ID")
+	}
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		indexHandler(w, r, playlistId)
+	})
 	log.Println("Listening port :3000")
 	http.ListenAndServe(":3000", mux)
 }
