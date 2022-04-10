@@ -10,7 +10,7 @@ https://developers.google.com/youtube/v3/docs/playlistItems/list
 backend-модуль в свою очередь должен обратиться к YouTube API получить список и передать его для отображения на html странице.
 
 ## Разворачивание проекта
-(без докера - пока не заблочили yoputube)
+(без докера - пока не заблочили youtube)
 
 `git clone git@github.com:mlfordev/go_playlist_youtube.git` - клонируем репу
 
